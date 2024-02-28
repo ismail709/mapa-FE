@@ -203,7 +203,7 @@
 								<h2>Contact With Us</h2>
 								<p>If you have any questions please fell free to contact with us.</p>
 								<!-- Form -->
-								<form class="form" method="post" action="mail/mail.php">
+								<form class="form" id="contact-form">
 									<div class="row">
 										<div class="col-lg-6">
 											<div class="form-group">
@@ -232,7 +232,7 @@
 										</div>
 										<div class="col-12">
 											<div class="form-group login-btn">
-												<button class="btn" type="submit">Send</button>
+												<button class="btn" type="submit" id="submit-btn">Send</button>
 											</div>
 											<div class="checkbox">
 												<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox">Do you want to subscribe our Newsletter ?</label>
@@ -240,6 +240,46 @@
 										</div>
 									</div>
 								</form>
+								<script>
+									const form = document.querySelector("#contact-form");
+									form.addEventListener("submit", (e) => {
+									  e.preventDefault();
+									  console.log(form.elements["name"].value);
+									  console.log(form.elements);
+									  const data = {
+										name: form.elements["name"].value,
+										email: form.elements["email"].value,
+										phone: form.elements["phone"].value,
+										subject: form.elements["subject"].value,
+										message: form.elements["message"].value,
+									  };
+									  console.log(data);
+									  const headers = new Headers();
+									  headers.append("Content-Type", "application/json");
+									  fetch("https://coral-app-uigpu.ondigitalocean.app/api/contactforms/create", {
+										method: "POST",
+										headers: headers,
+										body: JSON.stringify(data),
+									  })
+										.then((res) => {
+										  if (res.status == 201) {
+											form.reset();
+											const btn = document.querySelector("#submit-btn");
+											btn.innerHTML = "Sent";
+											btn.classList.add("bg-success");
+											setTimeout(() => {
+											  btn.innerHTML = "Send";
+											  btn.classList.remove("bg-success");
+											}, 3000);
+											return res.json();
+										  }
+										  console.log("Error");
+										})
+										.then((res) => {
+										  console.log(res);
+										});
+									});
+								  </script>
 								<!--/ End Form -->
 							</div>
 						</div>
